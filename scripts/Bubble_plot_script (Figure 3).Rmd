@@ -1,0 +1,45 @@
+---
+title: "Bubble plot (Figure 3)"
+author: "nicholaspudjihartono"
+date: "2023-09-19"
+output: html_document
+---
+
+# Load required libraries
+
+```{r}
+library(ggplot2)
+library(forcats)
+library(readxl)
+library(tidyverse)
+
+```
+
+# Read in data
+```{r}
+input <- read.csv("bubble_plot_data.csv")
+#The "bubble_lot_data.csv" contains the output of multimorbid3D pipeline (i.e., significant_enrichment_bootstrap.txt) but we have filtered it by "sim_pval" less than or equal to 0.05. Additionally, we have added an extra column called "group" that separate traits based on their trait groups.
+
+```
+
+# Plot
+
+```{r}
+p_gg <- ggplot(input, aes(x= factor(level, level = c(0,1,2)), y=forcats::fct_inorder(trait) %>% forcats::fct_rev())) + geom_point(aes(size=trait_eqtls, fill=adj_pval, stroke = 0), alpha = 0.75, shape = 21) + scale_size(limits = c(min(1), max(54))) +  labs( x = "", y = "", linewidth = "Number of eQTLs", fill = "Adj p value") + theme(legend.key=element_blank(),axis.ticks = element_blank(), axis.text.x = element_text(colour = "black", size = 8, angle = 90, vjust = 0.3, hjust = 1),
+        axis.text.y = element_text(colour = "black", size = 8),
+        legend.text = element_text(size = 8, colour ="black"),
+        legend.title = element_text(size = 9, face = "bold"),
+        panel.background = element_blank(),
+        legend.position = "right") + 
+  theme(panel.grid.major = element_line(colour = "grey50", size = 0.1))
+
+```
+
+
+# Save the figure
+
+```{r}
+ggsave(filename="bubble_plot_multimorbid.pdf", width=8, height=14)
+```
+
+
